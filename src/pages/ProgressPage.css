@@ -1,0 +1,18 @@
+.recharts-tooltip-wrapper {
+    outline: none;
+}
+
+.custom-recharts-tooltip {
+    background-color: rgba(20, 20, 40, 0.9) !important;
+    border: 1px solid #3a2d4a !important;
+    border-radius: 8px;
+    padding: 12px !important;
+}
+
+.custom-recharts-tooltip .recharts-tooltip-label {
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 1px solid #3a2d4a;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}

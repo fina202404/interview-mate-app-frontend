@@ -1,0 +1,29 @@
+/* Create new file: src/pages/UserManagementPage.css */
+
+/* Fix for Modal and Dropdown styles in Dark Theme */
+.ant-modal-content,
+.ant-select-dropdown {
+  background-color: #141414 !important; /* Darkest background for popups */
+}
+
+/* This makes the dropdown text visible against the dark background */
+.ant-select-dropdown .ant-select-item {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* This styles the selected or hovered item in the dropdown */
+.ant-select-dropdown .ant-select-item-option-selected,
+.ant-select-dropdown .ant-select-item-option-active {
+  background-color: #2b1d3b !important;
+}
+
+/* Make table action links more visible */
+.users-table-card .ant-table-tbody .ant-btn-link {
+    padding: 0;
+    color: #E923F4; /* Use your theme's primary color */
+    font-weight: 500;
+}
+
+.users-table-card .ant-table-tbody .ant-btn-link:hover {
+    color: #fff;
+}

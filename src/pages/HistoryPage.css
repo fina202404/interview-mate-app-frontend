@@ -1,0 +1,8 @@
+.history-page-container {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 24px;
+}
+.filter-bar {
+  margin-bottom: 24px;
+}

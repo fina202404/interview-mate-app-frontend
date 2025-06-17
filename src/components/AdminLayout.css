@@ -1,0 +1,82 @@
+/* src/components/AdminLayout.css (Redesigned) */
+
+.admin-layout .ant-layout-sider {
+  background: #1e2139 !important;
+  border-right: 1px solid #3a2d4a;
+}
+
+.admin-logo-container {
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-logo-container img {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+}
+
+.admin-logo-container .admin-logo-text {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.admin-layout .ant-menu-dark {
+  background: #1e2139;
+  padding: 0 8px;
+}
+
+.admin-layout .ant-menu-dark .ant-menu-item {
+    border-radius: 6px;
+}
+
+.admin-layout .ant-menu-dark .ant-menu-item-selected {
+  background-color: #E923F4 !important; /* Your theme's primary color */
+}
+
+.admin-layout .ant-layout-header {
+  padding: 0 24px;
+  background: #141414 !important;
+  border-bottom: 1px solid #3a2d4a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-layout .ant-layout-content {
+  margin: 24px;
+  padding: 24px;
+  min-height: 280px;
+  background: #190729; /* Dark surface color for content cards */
+  border-radius: 8px;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* ✅ FIX FOR INVISIBLE DROPDOWN TEXT */
+.ant-select-dropdown {
+  background-color: #000000 !important; /* Black background for the popup */
+  border: 1px solid #3a2d4a;
+}
+
+.ant-select-dropdown .ant-select-item {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: #2b1d3b !important;
+}
+
+.ant-select-dropdown .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}

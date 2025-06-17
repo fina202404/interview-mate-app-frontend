@@ -1,0 +1,46 @@
+/* src/pages/ProfilePage.css (Redesigned for a cooler look) */
+
+.profile-page-container {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 24px;
+}
+
+/* --- Left Column Profile Card --- */
+.profile-summary-card .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 24px;
+}
+
+
+.profile-username {
+  margin-bottom: 4px !important;
+}
+
+.profile-email {
+  margin-bottom: 16px !important;
+}
+
+.profile-plan-tag {
+  text-transform: uppercase;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+
+/* --- Right Column Cards --- */
+.profile-details-card .ant-descriptions-item-label {
+  font-weight: 600;
+}
+
+.danger-zone-card {
+  border-color: #ff4d4f !important;
+  margin-top: 24px;
+}
+
+.danger-zone-card .ant-card-head {
+  color: #ff7875 !important;
+}

@@ -1,0 +1,70 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #0D0614; /* Match our new dark background */
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background-color: #190729 !important; /* Dark surface color */
+  border: 1px solid #3a2d4a !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  padding: 16px;
+}
+
+.auth-card .ant-form-item-label > label {
+  color: rgba(234, 230, 240, 0.85) !important;
+  font-weight: 500;
+}
+
+.auth-card .ant-input-affix-wrapper {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+  border-color: #3a2d4a !important;
+  border-radius: 8px;
+}
+
+.auth-card .ant-input-affix-wrapper:hover,
+.auth-card .ant-input-affix-wrapper-focused {
+  border-color: #E923F4 !important; /* Primary color on focus */
+}
+
+.auth-card .ant-input {
+  color: #FFFFFF !important;
+  background-color: transparent !important;
+}
+
+.auth-card .ant-input-password-icon {
+  color: rgba(234, 230, 240, 0.65) !important;
+}
+
+.auth-card .ant-btn-primary {
+  border-radius: 8px;
+  font-weight: 600;
+  height: 44px !important;
+}
+
+.auth-card a {
+  color: #E923F4; /* Primary action color */
+  transition: color 0.3s;
+}
+
+.auth-card a:hover {
+  color: #FFFFFF;
+}
+
+.auth-title {
+    color: white !important;
+    text-align: center;
+    margin-bottom: 24px !important;
+}
+
+.auth-link-container {
+    text-align: center;
+    margin-top: 16px;
+    color: rgba(234, 230, 240, 0.65);
+}

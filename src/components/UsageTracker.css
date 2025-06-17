@@ -1,0 +1,7 @@
+.usage-tracker-card {
+    border-left: 3px solid #E923F4;
+    margin-bottom: 24px;
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+.usage-tracker-card .ant-card-body { padding: 12px 16px; }
+.usage-tracker-content { display: flex; justify-content: space-between; align-items: center; }

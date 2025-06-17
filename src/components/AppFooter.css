@@ -1,0 +1,7 @@
+/* Create new file: src/components/AppFooter.css */
+@media (max-width: 768px) {
+  .footer-column {
+    text-align: center !important;
+    margin-bottom: 16px;
+  }
+}

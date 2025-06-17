@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     isLoading: true,
   });
 
-  const API_URL = process.env.REACT_APP_API_URL + '/api';
+  const API_URL = "https://interview-mate-backend-dwadexa8eqgufpdj.japanwest-01.azurewebsites.net/api";
 
   const setAuthToken = (token) => {
     if (token) {

@@ -19,7 +19,7 @@ const ForgotPasswordPage = () => {
     setLoading(true);
     setError('');
     try {
-      // Step 1: Call your backend to generate the reset token
+      
       const backendResponse = await fetch(`${API_URL}/auth/forgotpassword`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

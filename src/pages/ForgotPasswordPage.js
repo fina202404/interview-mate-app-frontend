@@ -58,6 +58,13 @@ const ForgotPasswordPage = () => {
         const templateID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID_PASSWORD_RESET;
         const publicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
+        // --- TEMPORARY TEST: Display variables in the error alert ---
+        const debugMessage = `Service ID: [<span class="math-inline">\{serviceID\}\], Template ID\: \[</span>{templateID}], Public Key: [${publicKey}]`;
+        setError(debugMessage); // Use the error state to show our debug message
+        setLoading(false); // Stop the loading spinner
+        return; // Stop the function here just for this test
+        // --- END OF TEST ---
+
         console.log('--- DEBUGGING EMAILJS VARS ---');
         console.log('Service ID (raw):', serviceID, '| Type:', typeof serviceID);
         console.log('Template ID (raw):', templateID, '| Type:', typeof templateID);

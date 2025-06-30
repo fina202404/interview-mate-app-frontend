@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
   });
 
   const API_URL = "https://interview-mate-backend-dwadexa8eqgufpdj.japanwest-01.azurewebsites.net/api";
+  //const API_URL = "http://localhost:5001/api"
 
   const setAuthToken = (token) => {
     if (token) {

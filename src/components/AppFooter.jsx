@@ -22,7 +22,6 @@ const AppFooter = () => {
         </Col>
         <Col xs={24} md={8} className="footer-column" style={{ textAlign: 'right' }}>
           <Space size="middle">
-            <AntLink href="https://github.com" target="_blank"><GithubOutlined style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: '20px' }} /></AntLink>
             <AntLink href="https://twitter.com" target="_blank"><TwitterOutlined style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: '20px' }} /></AntLink>
             <AntLink href="https://linkedin.com" target="_blank"><LinkedinOutlined style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: '20px' }} /></AntLink>
           </Space>

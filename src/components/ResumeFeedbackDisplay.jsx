@@ -1,102 +1,160 @@
 import React from 'react';
-import { Card, Progress, Typography, Row, Col, List, Button, Divider } from 'antd';
-import { CheckCircleOutlined, WarningOutlined, BulbOutlined, DownloadOutlined } from '@ant-design/icons';
-
-// ✅ 1. Import jsPDF and autoTable separately and directly
+import { useTranslation } from 'react-i18next';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const { Title, Paragraph, Text } = Typography;
+// --- Icons ---
+const CheckIcon = () => <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
+const WarningIcon = () => <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>;
+const BulbIcon = () => <svg className="w-6 h-6 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>;
+const DownloadIcon = () => <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>;
 
-const FeedbackListItem = ({ icon, text, color }) => (
-    <List.Item>
-        <List.Item.Meta
-            avatar={React.cloneElement(icon, { style: { color, fontSize: '20px' } })}
-            title={<Text style={{ fontSize: '16px' }}>{text}</Text>}
-        />
-    </List.Item>
+// --- Sub-components ---
+const FeedbackList = ({ items, icon, colorClass }) => (
+    <ul className="space-y-3">
+        {items.map((item, index) => (
+            <li key={index} className="flex items-start gap-3">
+                <div className={`flex-shrink-0 mt-1 ${colorClass}`}>{icon}</div>
+                <span className="text-gray-300">{item}</span>
+            </li>
+        ))}
+    </ul>
 );
 
+const CircularProgress = ({ score }) => {
+    const radius = 80;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (score / 100) * circumference;
+
+    return (
+        <div className="relative inline-flex items-center justify-center">
+            <svg className="w-48 h-48" x-cloak="true" aria-hidden="true">
+                <circle className="text-gray-800" strokeWidth="12" stroke="currentColor" fill="transparent" r={radius} cx="96" cy="96" />
+                <circle
+                    className="text-neon-pink"
+                    strokeWidth="12"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={offset}
+                    strokeLinecap="round"
+                    stroke="url(#scoreGradient)"
+                    fill="transparent"
+                    r={radius}
+                    cx="96"
+                    cy="96"
+                    transform="rotate(-90 96 96)"
+                />
+                <defs>
+                    <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#E923F4" />
+                        <stop offset="100%" stopColor="#5600F4" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span className="absolute text-4xl font-bold text-white">{score}%</span>
+        </div>
+    );
+};
+
+
 const ResumeFeedbackDisplay = ({ feedbackData, jobTitle }) => {
+    const { t } = useTranslation();
     if (!feedbackData) return null;
 
-    const {
-        matchScore,
-        overallSummary,
-        strengths,
-        areasForImprovement,
-        actionPlan,
-    } = feedbackData;
+    const { matchScore, overallSummary, strengths, areasForImprovement, actionPlan } = feedbackData;
 
+    // UPDATE: The PDF generation logic is now correctly structured.
     const handleDownload = () => {
-        const doc = new jsPDF();
+        try {
+            const doc = new jsPDF();
+            let lastY = 10; // Start with an initial Y position
 
-        doc.setFontSize(22);
-        doc.text("AI Resume Analysis Report", 105, 20, null, null, "center");
-        doc.setFontSize(12);
-        doc.text(`Target Role: ${jobTitle}`, 14, 35);
-        doc.text(`Overall Match Score: ${matchScore}%`, 14, 42);
-        const splitSummary = doc.splitTextToSize(overallSummary, 180);
-        doc.text(splitSummary, 14, 52);
+            // ---- Title and Header ----
+            doc.setFontSize(22);
+            doc.text(t('feedback_report_title'), 14, (lastY += 12));
+            
+            doc.setFontSize(16);
+            doc.text(t('feedback_score_title', { jobTitle }), 14, (lastY += 10));
 
-        // ✅ 2. Call autoTable as a function, passing 'doc' as the first argument
-        autoTable(doc, {
-            startY: 70,
-            head: [['Strengths']],
-            body: strengths.map(item => [item]),
-            headStyles: { fillColor: '#52c41a' },
-            theme: 'grid'
-        });
+            doc.setFontSize(12);
+            doc.text(`${t('feedback_score_title_short')}: ${matchScore}%`, 14, (lastY += 10));
+            
+            // ---- Summary Text ----
+            doc.setFontSize(11);
+            const splitSummary = doc.splitTextToSize(overallSummary, 180); // 180 is the width
+            doc.text(splitSummary, 14, (lastY += 10));
+            lastY += splitSummary.length * 5; // Adjust Y position based on text height
 
-        autoTable(doc, {
-            head: [['Areas for Improvement']],
-            body: areasForImprovement.map(item => [item]),
-            headStyles: { fillColor: '#faad14' },
-            theme: 'grid'
-        });
+            // ---- Strengths Table ----
+            autoTable(doc, {
+                startY: lastY + 5,
+                head: [[t('feedback_strengths_title')]],
+                body: strengths.map(item => [item]),
+                theme: 'grid',
+                headStyles: { fillColor: [43, 2, 69] }
+            });
+            lastY = doc.lastAutoTable.finalY; // Update Y position after the table
 
-        autoTable(doc, {
-            head: [['Recommended Action Plan']],
-            body: actionPlan.map(item => [item]),
-            headStyles: { fillColor: '#72076E' },
-            theme: 'grid'
-        });
+            // ---- Improvements Table ----
+            autoTable(doc, {
+                startY: lastY + 10,
+                head: [[t('feedback_improvements_title')]],
+                body: areasForImprovement.map(item => [item]),
+                theme: 'grid',
+                headStyles: { fillColor: [233, 35, 244] }
+            });
+            lastY = doc.lastAutoTable.finalY; // Update Y position again
 
-        const pageCount = doc.internal.getNumberOfPages();
-        for(let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            doc.setFontSize(10);
-            doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 25, 287);
-            doc.text(`Report generated on: ${new Date().toLocaleDateString()}`, 14, 287);
+            // ---- Action Plan Table ----
+            autoTable(doc, {
+                startY: lastY + 10,
+                head: [[t('feedback_action_plan_title')]],
+                body: actionPlan.map(item => [item]),
+                theme: 'grid',
+                headStyles: { fillColor: [86, 0, 244] }
+            });
+            
+            doc.save(`Resume-Report-${jobTitle.replace(/\s+/g, '_')}.pdf`);
+        } catch(e) {
+            console.error("Failed to generate PDF:", e);
+            alert("Sorry, an error occurred while generating the PDF.");
         }
-
-        doc.save(`Resume-Report-${jobTitle.replace(" ", "_")}.pdf`);
     };
 
     return (
-        <div style={{ maxWidth: '900px', margin: 'auto', marginTop: '32px' }}>
-             <Divider />
-             <Title level={4} style={{textAlign: 'center', marginBottom: '24px'}}>AI Feedback Report</Title>
-            <Card style={{ textAlign: 'center', marginBottom: '24px', background: 'rgba(25, 7, 41, 0.8)', backdropFilter: 'blur(10px)' }}>
-                <Title level={3}>Resume Match Score for "{jobTitle}"</Title>
-                <Progress type="dashboard" percent={matchScore} format={(percent) => `${percent}%`} strokeColor={{ '0%': '#72076E', '100%': '#E923F4' }} width={200} />
-                <Paragraph style={{ marginTop: '16px', fontSize: '16px', maxWidth: '600px', margin: '16px auto 0' }}>{overallSummary}</Paragraph>
-            </Card>
+        <div className="max-w-4xl mx-auto mt-8 p-4">
+             <hr className="border-white/10 my-8" />
+             <h2 className="text-3xl font-bold text-center text-white mb-12">{t('feedback_report_title')}</h2>
+            
+            <div className="text-center bg-gray-900/50 border border-white/10 rounded-2xl p-8 mb-8">
+                <h3 className="text-2xl font-bold text-white mb-4">{t('feedback_score_title', { jobTitle })}</h3>
+                <CircularProgress score={matchScore} />
+                <p className="mt-6 text-lg text-gray-400 max-w-2xl mx-auto">{overallSummary}</p>
+            </div>
 
-            <Row gutter={[24, 24]}>
-                <Col xs={24} md={12}><Card title={<><CheckCircleOutlined style={{color: '#52c41a'}}/> Strengths</>}><List dataSource={strengths} renderItem={(item) => (<FeedbackListItem icon={<CheckCircleOutlined />} text={item} color="#52c41a" />)} /></Card></Col>
-                <Col xs={24} md={12}><Card title={<><WarningOutlined style={{color: '#faad14'}}/> Areas for Improvement</>}><List dataSource={areasForImprovement} renderItem={(item) => (<FeedbackListItem icon={<WarningOutlined />} text={item} color="#faad14" />)}/></Card></Col>
-            </Row>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-gray-900/50 border border-white/10 rounded-xl p-6">
+                    <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><CheckIcon/> {t('feedback_strengths_title')}</h4>
+                    <FeedbackList items={strengths} icon={<CheckIcon/>} colorClass="text-green-400" />
+                </div>
+                <div className="bg-gray-900/50 border border-white/10 rounded-xl p-6">
+                    <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><WarningIcon/> {t('feedback_improvements_title')}</h4>
+                    <FeedbackList items={areasForImprovement} icon={<WarningIcon/>} colorClass="text-yellow-400" />
+                </div>
+            </div>
 
-            <Divider />
+            <div className="bg-gray-900/50 border border-white/10 rounded-xl p-6">
+                <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><BulbIcon/> {t('feedback_action_plan_title')}</h4>
+                <FeedbackList items={actionPlan} icon={<BulbIcon/>} colorClass="text-neon-pink" />
+            </div>
 
-            <Card title={<><BulbOutlined /> Recommended Action Plan</>}><List dataSource={actionPlan} renderItem={(item) => (<FeedbackListItem icon={<BulbOutlined />} text={item} color="#E923F4" />)}/></Card>
-
-            <div style={{ textAlign: 'center', marginTop: '32px' }}>
-                {/* ✅ 3. The onClick handler doesn't change, but it now calls the corrected function */}
-                <Button type="primary" icon={<DownloadOutlined />} size="large" onClick={handleDownload}>
-                    Download Full PDF Report
-                </Button>
+            <div className="text-center mt-12">
+                <button 
+                  onClick={handleDownload}
+                  className="inline-flex items-center justify-center text-white font-bold text-lg py-3 px-10 rounded-full transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-neon-pink to-bright-blue hover:shadow-[0_0_25px_theme(colors.neon-pink)]"
+                >
+                    <DownloadIcon />
+                    {t('feedback_download_button')}
+                </button>
             </div>
         </div>
     );

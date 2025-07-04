@@ -1,32 +1,28 @@
 import React, { useContext } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import { Spin, Row } from 'antd'; // Added Row for consistent centering
 
-const ProtectedRoute = ({ children }) => { // children prop can be used for an alternative pattern, but Outlet is standard for v6 layouts
+// --- Reusable Spinner Component ---
+const Spinner = () => (
+    <div className="flex flex-col justify-center items-center min-h-screen bg-black text-white p-6 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-y-2 border-white"></div>
+        <p className="mt-4 text-lg text-gray-300">Loading user data...</p>
+    </div>
+);
+
+const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useContext(AuthContext);
   const location = useLocation();
 
-  console.log(
-    `DEBUG: ProtectedRoute - Path: ${location.pathname}, isLoading: ${isLoading}, isAuthenticated: ${isAuthenticated}`
-  );
-
   if (isLoading) {
-    console.log("DEBUG: ProtectedRoute - Showing loading spinner...");
-    return (
-      <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
-        <Spin size="large" tip="Loading user data..." />
-      </Row>
-    );
+    return <Spinner />;
   }
 
   if (!isAuthenticated) {
-    console.log(`DEBUG: ProtectedRoute - Not authenticated. Redirecting to /login. Intended path: ${location.pathname}`);
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  console.log(`DEBUG: ProtectedRoute - Authenticated. Rendering Outlet for path: ${location.pathname}`);
-  return children ? children : <Outlet />; // Prefer Outlet for route elements
+  return children ? children : <Outlet />; 
 };
 
 export default ProtectedRoute;

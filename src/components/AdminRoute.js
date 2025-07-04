@@ -1,19 +1,22 @@
-// frontend/src/components/AdminRoute.js
 import React, { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import AuthContext from '../context/AuthContext'; // Correct path from components/ to context/
-import { Spin, Result, Button, Row, Col } from 'antd'; // Only AntD components used by AdminRoute itself
+import AuthContext from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+
+const Spinner = () => <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>;
+const LockIcon = () => <svg className="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>;
 
 const AdminRoute = () => {
   const { isAuthenticated, user, isLoading } = useContext(AuthContext);
   const location = useLocation();
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
-      <Row justify="center" align="middle" style={{ minHeight: 'calc(100vh - 128px)' }}>
-        <Spin size="large"/>
-      </Row>
+      <div className="flex justify-center items-center min-h-screen bg-black">
+        <Spinner />
+      </div>
     );
   }
 
@@ -21,23 +24,20 @@ const AdminRoute = () => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Ensure user object and role property exist before checking the role
   if (!user || user.role !== 'admin') {
     return (
-      <Row justify="center" align="middle" style={{ minHeight: 'calc(100vh - 128px)', padding: '20px' }}>
-        <Col>
-          <Result
-            status="403"
-            title="403 - Access Denied"
-            subTitle="Sorry, you are not authorized to access this page."
-            extra={<Link to="/"><Button type="primary">Back Home</Button></Link>}
-          />
-        </Col>
-      </Row>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-black text-white p-6 text-center">
+        <LockIcon />
+        <h1 className="text-4xl font-extrabold text-red-500 mt-6">{t('admin_route_denied_title')}</h1>
+        <p className="text-lg text-gray-400 mt-2 max-w-md">{t('admin_route_denied_subtitle')}</p>
+        <Link to="/" className="mt-8 bg-bright-blue text-white font-semibold py-3 px-6 rounded-md hover:bg-royal-blue transition-colors">
+            {t('admin_route_back_home')}
+        </Link>
+      </div>
     );
   }
 
-  return <Outlet />; // Renders the child route's element if authenticated and admin
+  return <Outlet />;
 };
 
 export default AdminRoute;

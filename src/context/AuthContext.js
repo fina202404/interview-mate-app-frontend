@@ -1,11 +1,17 @@
-// src/context/AuthContext.js (Reverted to the original, working version)
-
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import { Spin } from 'antd';
 
 const AuthContext = createContext();
+
+// A custom spinner component to replace AntD's Spin
+const LoadingSpinner = () => (
+    <div className="flex flex-col justify-center items-center min-h-screen bg-black text-white p-6 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-y-2 border-white"></div>
+        <p className="mt-4 text-lg text-gray-300">Loading User Data...</p>
+    </div>
+);
+
 
 export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
@@ -26,7 +32,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-    const logout = useCallback(() => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     setAuthToken(null);
     setAuthState({ token: null, user: null, isAuthenticated: false, isLoading: false });
@@ -39,19 +45,19 @@ export const AuthProvider = ({ children }) => {
       try {
         const decodedToken = jwtDecode(tokenToUse);
         if (decodedToken.exp * 1000 < Date.now()) {
-          logout(); // Use your existing logout function
-          return null; // Return null if token is expired
+          logout();
+          return null;
         }
         const res = await axios.get(`${API_URL}/auth/me`);
         if (res.data.user) {
-          setAuthState(prevState => ({ // Use functional update for safety
+          setAuthState(prevState => ({
             ...prevState,
             token: tokenToUse,
             user: res.data.user,
             isAuthenticated: true,
             isLoading: false,
           }));
-          return res.data.user; // ✅ FIX: Return the newly fetched user data
+          return res.data.user;
         }
       } catch (error) {
         logout();
@@ -61,7 +67,8 @@ export const AuthProvider = ({ children }) => {
       setAuthState({ token: null, user: null, isAuthenticated: false, isLoading: false });
       return null;
     }
-  }, [logout, API_URL]);
+  // UPDATE: The dependency array has been restored to prevent an infinite loop.
+  }, [logout, API_URL, authState.token]);
 
   useEffect(() => {
     loadUser();
@@ -116,11 +123,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   if (authState.isLoading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#0D0614' }}>
-        <Spin size="large" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
